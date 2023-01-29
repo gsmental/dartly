@@ -2,7 +2,7 @@ name: dartly
 description: >-
   Dartly is a set of extension and functions for Dart that makes your life
    easier and more convenient.
-version: 1.0.2
+version: 1.0.5
 homepage: https://github.com/gsmental/dartly
 
 environment:

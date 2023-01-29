@@ -78,4 +78,128 @@ class Validate {
       (month == DateTime.february && isLeapYear(year))
           ? 29
           : _daysInMonth[month];
+
+  /// Remove extra whitespace between words then trim.
+  static String removeExtraWhiteSpaces(String value) {
+    final regex = RegExp(r'\S+');
+    final words =
+        regex.allMatches(value).map((v) => v.group(0)).join(' ').trim();
+    return words;
+  }
+
+  static bool isAlphanumeric(String value) {
+    if (value.length < 2) return false;
+    return value.contains(RegExp(r'^(?=.*?[a-z])(?=.*?[0-9]).*$'));
+  }
+
+  static bool isAlphanumericUppercase(String value) {
+    if (value.length < 2) return false;
+    return value.contains(RegExp(r'^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[A-Z]).*$'));
+  }
+
+  static bool isAlphanumericUppercaseWithSymbol(String value) {
+    if (value.length < 2) return false;
+    return value.contains(
+        RegExp(r'^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[A-Z])(?=.*?[!@#$]).*$'));
+  }
+
+  static bool isUrl(String value, {bool protocolMandatory = true}) {
+    final RegExp regexOptionalProtocol = RegExp(
+        r'(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)');
+
+    final RegExp regexMandatoryProtocol = RegExp(
+        r'https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#()?&//=]*)');
+
+    return value.contains(
+      protocolMandatory ? regexMandatoryProtocol : regexOptionalProtocol,
+    );
+  }
+
+  static bool isContainsWhiteSpace(String value) {
+    if (value.isEmpty) return false;
+    return value.contains(RegExp(r'\s'));
+  }
+
+  static bool isContainsUpperCase(String value) {
+    return value.contains(RegExp(r'(?=.*?[A-Z]).*$'));
+  }
+
+  static bool isContainsLowerCase(String value) {
+    return value.contains(RegExp(r'(?=.*?[a-z]).*$'));
+  }
+
+  /// convert the input to a boolean.
+  ///
+  /// Everything except for '0', 'false' and ''
+  /// returns `true`. In `strict` mode only '1' and 'true' return `true`.
+  static bool toBoolean(String str, [bool? strict]) {
+    if (strict == true) {
+      return str == '1' || str == 'true';
+    }
+    return str != '0' && str != 'false' && str != '';
+  }
+
+  /// trim characters (whitespace by default) from both sides of the input
+  static String trim(String str, [String? chars]) {
+    RegExp pattern = (chars != null)
+        ? RegExp('^[$chars]+|[$chars]+\$')
+        : RegExp(r'^\s+|\s+$');
+    return str.replaceAll(pattern, '');
+  }
+
+  /// trim characters from the left-side of the input
+  static String ltrim(String str, [String? chars]) {
+    var pattern = chars != null ? RegExp('^[$chars]+') : RegExp(r'^\s+');
+    return str.replaceAll(pattern, '');
+  }
+
+  /// trim characters from the right-side of the input
+  static String rtrim(String str, [String? chars]) {
+    var pattern = chars != null ? RegExp('[$chars]+\$') : RegExp(r'\s+$');
+    return str.replaceAll(pattern, '');
+  }
+
+  /// check if the string is a date
+  static bool isDate(String str) {
+    try {
+      DateTime.parse(str);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /// check if the string [str] is an email
+  static bool isEmail(String str) {
+    RegExp _email = RegExp(
+        r"^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))$");
+    return _email.hasMatch(str.toLowerCase());
+  }
+
+  ///Returns true if [date] is the next day
+  static bool isTomorrow(DateTime date) {
+    final now = DateTime.now();
+    return DateTime(now.year, now.month, now.day + 1) ==
+        (DateTime(date.year, date.month, date.day));
+  }
+
+  ///Returns true if [date] is current day
+  static bool isToday(DateTime date) {
+    final now = DateTime.now();
+    final diffDays = date.difference(now).inDays;
+    final isSameAsToday = (diffDays == 0 && date.day == now.day);
+    return isSameAsToday;
+  }
+
+  ///Returns true if [date] is the previous day
+  static bool isYesterday(DateTime date) {
+    final now = DateTime.now();
+
+    return DateTime(now.year, now.month, now.day - 1) ==
+        (DateTime(date.year, date.month, date.day));
+  }
+
+  ///Returs true if [date] is in current month of the current year
+  static bool isThisMonth(DateTime date) =>
+      date.year == DateTime.now().year && date.month == DateTime.now().month;
 }
